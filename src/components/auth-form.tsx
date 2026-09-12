@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signInPatient, signUpPatient } from "@/lib/auth";
+import { signInPatient, signUpPatient, SIGNUP_LANGUAGES } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,7 @@ export function AuthForm({ mode, onDone }: { mode: "login" | "signup"; onDone?: 
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [language, setLanguage] = useState<string>("en");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -22,7 +23,7 @@ export function AuthForm({ mode, onDone }: { mode: "login" | "signup"; onDone?: 
     setErr(null);
     try {
       if (mode === "signup") {
-        const patientId = await signUpPatient({ name, phone, email, password });
+        const patientId = await signUpPatient({ name, phone, email, password, language });
         onDone?.(patientId);
       } else {
         await signInPatient(email, password);
@@ -51,8 +52,21 @@ export function AuthForm({ mode, onDone }: { mode: "login" | "signup"; onDone?: 
           <>
             <Label htmlFor="auth-name">Full name</Label>
             <Input id="auth-name" value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" />
-            <Label htmlFor="auth-phone">Phone number</Label>
-            <Input id="auth-phone" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" />
+          <Label htmlFor="auth-phone">Phone number</Label>
+          <Input id="auth-phone" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" />
+          <Label htmlFor="auth-lang">Preferred consultation language</Label>
+          <select
+            id="auth-lang"
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+            className="rounded-md border border-input bg-background px-3 py-2 text-sm"
+          >
+            {SIGNUP_LANGUAGES.map((l) => (
+              <option key={l.code} value={l.code}>
+                {l.name}
+              </option>
+            ))}
+          </select>
           </>
         )}
         <Label htmlFor="auth-email">Email</Label>

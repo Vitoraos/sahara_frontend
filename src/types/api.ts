@@ -555,6 +555,8 @@ export interface components {
             email: string;
             /** Password */
             password: string;
+            /** Preferred Language */
+            preferred_language?: string;
         };
         /** PatientSignupResponse */
         PatientSignupResponse: {
